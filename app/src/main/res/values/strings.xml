@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FirebaseNotifications</string>
+    <string name="copy_paste">For Copy and Paste</string>
+    <string name="token">TOKEN</string>
+</resources>

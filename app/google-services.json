@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "626504355731",
+    "project_id": "notificationapp-gbbig-tmi",
+    "storage_bucket": "notificationapp-gbbig-tmi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626504355731:android:f921959c676ec616c12266",
+        "android_client_info": {
+          "package_name": "com.example.firebasenotifications"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjA_SGp8ZDKgDZ8NS8QGqsoib5OJuRoEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
