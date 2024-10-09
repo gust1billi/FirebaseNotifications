@@ -19,6 +19,7 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MAIN ACTIVITY";
+    GlobalApp app = new GlobalApp();
 
     Button token;
     TextView hello;
@@ -45,6 +46,22 @@ public class MainActivity extends AppCompatActivity {
 
         token.setOnClickListener( view -> firebaseMessagingToken() );
         askNotificationPermission();
+        firebaseSubscribeToTopic("weather");
+        firebaseSubscribeToTopic("ESports");
+        firebaseSubscribeToTopic("Programming");
+        firebaseSubscribeToTopic("Manga");
+    }
+
+    private void firebaseSubscribeToTopic(String topic) {
+        FirebaseMessaging.getInstance().subscribeToTopic( topic )
+                .addOnCompleteListener(task -> {
+                    String msg = "Subscribed ";
+                    if ( !task.isSuccessful() ){
+                        msg = "Subscription Task Failed";
+                    }
+                    Timber.tag( TAG ).d( msg );
+                    Utils.showToast( MainActivity.this, msg );
+                });
     }
 
     private void firebaseMessagingToken() {
@@ -55,11 +72,13 @@ public class MainActivity extends AppCompatActivity {
                         String token = task.getResult();
                         String msg = TAG + "\nFCM REGIS TOKEN = " + token;
                         Timber.tag( TAG ).e( msg );
+
                         hello.setText( token );
+                        app.setAccess_token( token );
+                        Timber.tag( TAG ).e( "Token from Global: %s", token );
                         tokenCopy.setText( token );
                     } else Timber.tag( TAG ).e( failure );
                 });
-
     }
 
     private void initProjectTest() {

@@ -9,16 +9,12 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.firebasenotifications.NotificationActivity;
 import com.example.firebasenotifications.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -69,11 +65,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if ( remoteMessage.getNotification() != null ) {
-            Timber.tag(TAG).d("Message Notification Body: " + remoteMessage.getNotification().getBody());
             String notificationBody = remoteMessage.getNotification().getBody();
+            Timber.tag(TAG).d(
+                    "Message Notification Body: %s", notificationBody );
             if ( remoteMessage.getNotification().getBody() != null ) {
                 String title = remoteMessage.getNotification().getTitle();
-                sendNotification( title, notificationBody );
+                String topic = remoteMessage.getFrom();
+//                if ( remoteMessage.getNotification())
+                sendNotification( title, notificationBody, topic );
             }
         }
 
@@ -86,9 +85,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageTitle, String messageBody) {
+    private void sendNotification(String messageTitle, String messageBody, String topic) {
+        String type = "";
+        // TOPICS ARE CASE SENSITIVE
+        switch (topic) {
+            case "/topics/weather":
+                type = "weather";
+                break;
+            case "/topics/ESports":
+//                Timber.tag(TAG).d("Topic ESports ");
+                type = "Esports";
+                break;
+            case "/topics/Manga":
+//                Timber.tag(TAG).d("Topic Manga ");
+                type = "Manga";
+                break;
+            case "/topics/Programming":
+//                Timber.tag(TAG).d("Topic Programming ");
+                type = "programming";
+                break;
+        } Timber.tag( TAG ).d( "Topic %s ", type);
         Intent intent = new Intent(this, NotificationActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("topic", topic);
 
         // Create the TaskStackBuilder and add the intent, which inflates the back stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -152,6 +171,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendRegistrationToServer( String token ) {
-
+        String message = "Send FCM Registration Token and Save to DB";
+        Timber.tag( TAG ).e(
+                "%s\n FCM REGIS TOKEN: %s",
+                message, token
+        );
     }
 }
