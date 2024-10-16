@@ -2,4 +2,5 @@
     <string name="app_name">FirebaseNotifications</string>
     <string name="copy_paste">For Copy and Paste</string>
     <string name="token">TOKEN</string>
+    <string name="default_web_client_id">626504355731-k91ob454u3nmisejjs84l89qr6n8428l.apps.googleusercontent.com</string>
 </resources>

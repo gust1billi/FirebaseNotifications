@@ -2,18 +2,26 @@ package com.example.firebasenotifications;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.io.Console;
 
 import timber.log.Timber;
 
@@ -21,9 +29,40 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MAIN ACTIVITY";
     GlobalApp app = new GlobalApp();
 
-    Button token;
+    Button token, GSignIn;
     TextView hello;
     EditText tokenCopy;
+
+    private FirebaseAuth firebaseAuth;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if(currentUser != null){
+//            reload();
+            Timber.tag( TAG ).e( "RELOAD ");
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate( R.menu.main_menu, menu );
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if ( item.getItemId() == R.id.hello ){
+            Timber.tag( TAG ).e( "Hello" );
+        } else if ( item.getItemId() == R.id.signIn ){
+            Timber.tag( TAG ).e( "Sign In ");
+            Intent i = new Intent( MainActivity.this, SignInActivity.class );
+            startActivity( i );
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
@@ -38,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initProjectTest();
-
         token = findViewById( R.id.tokenBtn );
         hello = findViewById( R.id.hello );
         tokenCopy = findViewById( R.id.edit_text_id );
@@ -50,6 +87,15 @@ public class MainActivity extends AppCompatActivity {
         firebaseSubscribeToTopic("ESports");
         firebaseSubscribeToTopic("Programming");
         firebaseSubscribeToTopic("Manga");
+
+        GSignIn = findViewById( R.id.signInByGoogle );
+        GSignIn.setOnClickListener( view -> {
+            Intent i = new Intent( MainActivity.this, SignInActivity.class );
+            startActivity( i );
+        });
+
+        firebaseAuth = FirebaseAuth.getInstance();
+
     }
 
     private void firebaseSubscribeToTopic(String topic) {
@@ -79,12 +125,6 @@ public class MainActivity extends AppCompatActivity {
                         tokenCopy.setText( token );
                     } else Timber.tag( TAG ).e( failure );
                 });
-    }
-
-    private void initProjectTest() {
-        Utils.showToast( MainActivity.this, "HELLO WORLD!" );
-//        Timber.tag(TAG).e("bruh");
-        Timber.i( "Custom Logs");
     }
 
     private void askNotificationPermission() {
